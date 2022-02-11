@@ -21,7 +21,7 @@ export const createTasks: Handler = (req, res) => {
     res.status(500).send(error);
   }
 
-  return res.json(newTask);
+  return res.json({ name, description });
 };
 
 export const getTask: Handler = (req, res) => {
