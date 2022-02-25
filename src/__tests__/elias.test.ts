@@ -1,5 +1,5 @@
 describe('This is a test', () => {
-  it('should pass', () => {
-    expect(3).toBe(3);
-  });
+    it('should pass', () => {
+        expect(3).toBe(3);
+    });
 });
