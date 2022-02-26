@@ -1,6 +1,6 @@
 import { Handler } from 'express';
 import { nanoid } from 'nanoid';
-import { errorResponse, successResponse } from '@src/core/responses';
+import { errorResponse, successResponse } from '../core/responses';
 import { getConnection } from '../db';
 
 export const getTasks: Handler = (req, res) => {
