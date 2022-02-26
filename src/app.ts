@@ -3,13 +3,10 @@ import cors from 'cors';
 import morgan from 'morgan';
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
-import dotenv from 'dotenv-safe';
 import { options } from './swaggerOptions';
 import taskRoutes from './routes/tasks.routes';
 
 const app = express();
-
-dotenv.config();
 
 app.set('port', process.env.PORT || 3000);
 app.use(cors());

@@ -1,8 +1,15 @@
-import app from '@src/app';
 import { createConnection } from '@src/db';
+import ConfigManager from './managers/config.manager';
+import ServerManager from './managers/server.manager';
 
-createConnection();
+async function init() {
+    try {
+        ConfigManager.loadConfig();
+        createConnection();
+        await ServerManager.start();
+    } catch (error) {
+        console.log(error);
+    }
+}
 
-app.listen(app.get('port'));
-
-console.log(`server listening on port ${app.get('port')}`);
+init();
