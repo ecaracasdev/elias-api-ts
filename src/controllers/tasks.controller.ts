@@ -1,5 +1,6 @@
 import { Handler } from 'express';
 import { nanoid } from 'nanoid';
+import { errorResponse, successResponse } from '@src/core/responses';
 import { getConnection } from '../db';
 
 export const getTasks: Handler = (req, res) => {
@@ -18,10 +19,10 @@ export const createTasks: Handler = (req, res) => {
     try {
         getConnection().get('tasks').push(newTask).write();
     } catch (error) {
-        res.status(500).send(error);
+        errorResponse(res, 'Error al crear la tarea', 500);
     }
 
-    return res.json({ name, description });
+    return successResponse(res, { name, description }, 'Tarea creada correctamente', 201);
 };
 
 export const getTask: Handler = (req, res) => {
