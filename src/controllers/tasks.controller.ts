@@ -1,5 +1,5 @@
 import { Handler } from 'express';
-import { nanoid } from 'nanoid';
+import Tasks from '@src/models/tasks';
 import { errorResponse, successResponse } from '../core/responses';
 import { getConnection } from '../db';
 
@@ -8,21 +8,15 @@ export const getTasks: Handler = (req, res) => {
     return res.json(data);
 };
 
-export const createTasks: Handler = (req, res) => {
+export const createTasks: Handler = async (req, res) => {
     const { name, description } = req.body;
-    const newTask = {
-        name,
-        description,
-        id: nanoid(),
-    };
-
+    const newTask = new Tasks({ name, description });
     try {
-        getConnection().get('tasks').push(newTask).write();
-    } catch (error) {
-        errorResponse(res, 'Error al crear la tarea', 500);
+        const savedTask = await newTask.save();
+        return successResponse(res, savedTask, 'Tarea creada correctamente', 201);
+    } catch (error: any) {
+        return errorResponse(res, error.message, 403);
     }
-
-    return successResponse(res, { name, description }, 'Tarea creada correctamente', 201);
 };
 
 export const getTask: Handler = (req, res) => {
