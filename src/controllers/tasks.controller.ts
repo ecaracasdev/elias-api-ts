@@ -1,16 +1,20 @@
 import { Handler } from 'express';
 import Tasks from '@src/models/tasks';
 import { errorResponse, successResponse } from '../core/responses';
-import { getConnection } from '../db';
 
-export const getTasks: Handler = (req, res) => {
-    const data = getConnection().get('tasks').value();
-    return res.json(data);
+export const getTasks: Handler = async (req, res) => {
+    const tasksList = await Tasks.find();
+    return res.json(tasksList);
 };
 
 export const createTasks: Handler = async (req, res) => {
     const { name, description } = req.body;
-    const newTask = new Tasks({ name, description });
+
+    const newTask = new Tasks({
+        name,
+        description,
+    });
+
     try {
         const savedTask = await newTask.save();
         return successResponse(res, savedTask, 'Tarea creada correctamente', 201);
@@ -19,33 +23,34 @@ export const createTasks: Handler = async (req, res) => {
     }
 };
 
-export const getTask: Handler = (req, res) => {
-    const taskFound = getConnection().get('tasks').find({ id: req.params.id }).value();
+export const getTask: Handler = async (req, res) => {
+    const { id: _taskId } = req.params;
+    const taskFound = await Tasks.findById(_taskId);
     if (!taskFound) return res.status(404).json({ msg: 'task was not found' });
     return res.json(taskFound);
 };
 
-export const deleteTask: Handler = (req, res) => {
-    const taskFound = getConnection().get('tasks').find({ id: req.params.id }).value();
+export const deleteTask: Handler = async (req, res) => {
+    const { id: _taskId } = req.params;
+    const taskFound = await Tasks.findById(_taskId);
     if (!taskFound) return res.status(404).json({ msg: 'task was not found' });
 
-    console.log(req.params);
-    const taskDeleted = getConnection().get('tasks').remove({ id: req.params.id }).write();
-
-    return res.json(taskDeleted[0]);
+    const taskDeleted = await Tasks.findByIdAndDelete(_taskId);
+    console.log(taskDeleted);
+    return res.json(taskDeleted);
 };
 
-export const updateTask: Handler = (req, res) => {
-    const taskFound = getConnection().get('tasks').find({ id: req.params.id }).value();
-    if (!taskFound) return res.status(404).json({ msg: 'task was not found' });
-
-    const taskUpdated = getConnection().get('tasks').find({ id: req.params.id }).assign(req.body).write();
+export const updateTask: Handler = async (req, res) => {
+    const { id: _taskId } = req.params;
+    const updates = req.body;
+    const options = { new: true };
+    const taskUpdated = await Tasks.findByIdAndUpdate(_taskId, updates, options);
+    if (!taskUpdated) return res.status(404).json({ msg: 'task was not found' });
 
     return res.json(taskUpdated);
 };
 
-export const count: Handler = (req, res) => {
-    const taskLength = getConnection().get('tasks').value().length;
-
+export const count: Handler = async (req, res) => {
+    const taskLength = await Tasks.count();
     return res.json(taskLength);
 };
