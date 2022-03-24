@@ -27,6 +27,7 @@ module.exports = {
         ],
         'import/extensions': 'off',
         'no-console': 'off',
+        'no-underscore-dangle': 'off',
         'import/order': [
             'error',
             {

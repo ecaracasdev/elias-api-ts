@@ -1,10 +1,16 @@
 import { Handler } from 'express';
 import Tasks from '@src/models/tasks';
 import { errorResponse, successResponse } from '../core/responses';
+import TaskService from '@src/services/tasks.service';
 
+// If we use services, we separate the business logic from the data layer
 export const getTasks: Handler = async (req, res) => {
-    const tasksList = await Tasks.find();
-    return res.json(tasksList);
+    try {
+        const tasksList = await TaskService._find({});
+        return successResponse(res, tasksList, 'success', 200);
+    } catch (error: any) {
+        return errorResponse(res, error.message, 403);
+    }
 };
 
 export const createTasks: Handler = async (req, res) => {

@@ -4,7 +4,7 @@ export const successResponse = (res: Response, data: Object, message: String, st
     res.status(statusCode).send({
         statusCode,
         message,
-        body: data,
+        data,
     });
 };
 
@@ -12,6 +12,6 @@ export const errorResponse = (res: Response, errorMessage: String, statusCode: n
     res.status(statusCode).send({
         statusCode,
         errorMessage,
-        body: '',
+        data: '',
     });
 };
