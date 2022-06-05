@@ -1,40 +1,25 @@
 import { Handler } from 'express';
-import { successResponse } from '@src/core/responses';
+import { errorResponse, successResponse } from '@src/core/responses';
+import TYPE_REGISTER from '@src/core/types/user.type';
+import UserService from '@src/services/user.service';
 
-type body = {
-    email?: string;
-    password: string;
-    userName?: string;
-};
-
-type ILoginInfo = {
-    email: string;
-    name: string;
-    lastName: string;
-    role: string;
-};
-
-type response = {
-    user: ILoginInfo;
-};
-
-const getLoginResponse = (user: any): response => {
-    const userInfo: ILoginInfo = {
-        email: user.email,
-        name: user.name,
-        lastName: user.lastName,
-        role: user.role,
-    };
-
+const getCreateResponse = (user: any): TYPE_REGISTER => {
     return {
-        user: userInfo,
+        email: user.email,
+        userName: user.userName,
+        role: user.role,
     };
 };
 
 const controller: Handler = async (req, res) => {
-    const user: body = req.body;
-    const data: response = getLoginResponse(user);
-    return successResponse(res, data, 'success', 200);
+    const user: TYPE_REGISTER = req.body;
+    try {
+        const savedUser = await UserService.createOne(user);
+        const data: TYPE_REGISTER = getCreateResponse(savedUser);
+        return successResponse(res, data, 'user created', 200);
+    } catch (error: any) {
+        return errorResponse(res, error.message, 403);
+    }
 };
 
 export default controller;

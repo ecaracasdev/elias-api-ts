@@ -1,39 +1,22 @@
 import { Handler } from 'express';
 import { successResponse } from '@src/core/responses';
+import User from '@src/core/types/user.type';
+import ILoginInfo from '@src/core/types/auth.type';
 
-type body = {
-    email?: string;
-    password: string;
-    userName?: string;
-};
-
-type ILoginInfo = {
-    email: string;
-    name: string;
-    lastName: string;
-    role: string;
-};
-
-type response = {
-    user: ILoginInfo;
-};
-
-const getLoginResponse = (user: any): response => {
-    const userInfo: ILoginInfo = {
-        email: user.email,
-        name: user.name,
-        lastName: user.lastName,
-        role: user.role,
-    };
-
+const getLoginResponse = (user: any): ILoginInfo => {
     return {
-        user: userInfo,
+        User: {
+            email: user.email,
+            name: user.name,
+            lastName: user.lastName,
+            role: user.role,
+        },
     };
 };
 
 const controller: Handler = async (req, res) => {
-    const user: body = req.body;
-    const data: response = getLoginResponse(user);
+    const user: User = req.body;
+    const data: ILoginInfo = getLoginResponse(user);
     return successResponse(res, data, 'success', 200);
 };
 
